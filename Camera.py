@@ -18,11 +18,9 @@ class Camera:
         # ограничить движение камеры по X, чтобы не уйти за левый и правый край карты
         self.x = max(0, min(self.x, self.width - self.screen_width))
         # ограничить движение камеры по Y, чтобы не уйти за верхний и нижний край карты
-        print(self.height)
         self.y = max(0, min(self.y, self.height - self.screen_height))
 
         self.rect.topleft = (self.x, self.y)
-
 
     def apply(self, rect):
         # Возвращает новый rect с учётом камеры

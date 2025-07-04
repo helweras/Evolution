@@ -14,11 +14,11 @@ class Game:
         self.size_map = MAP_SIZE_CELL
         self.game_map = Map(MAP_SIZE_CELL)
 
-
         self.camera = self.create_camera()
         self.fps = FPS
 
-    def setting_window(self):
+    @staticmethod
+    def setting_window():
         screen_info = pygame.display.Info()
         w, h = screen_info.current_w, screen_info.current_h - 60
 
@@ -26,7 +26,8 @@ class Game:
         pygame.display.set_caption("Evolution Simulation")
         return screen
 
-    def create_camera(self):
+    @staticmethod
+    def create_camera():
         screen_info = pygame.display.Info()
         w, h = screen_info.current_w, screen_info.current_h
         camera = Camera(MAP_SIZE_PIX, w, h)
@@ -36,7 +37,7 @@ class Game:
         # Обработка нажатий клавиш, мыши, выхода
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return  False
+                return False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:  # если нажали ESC
                     return False
@@ -55,22 +56,22 @@ class Game:
             self.camera.move(0, -CAMERA_SPEED)
         if keys[pygame.K_DOWN]:
             self.camera.move(0, CAMERA_SPEED)
-        for cell in self.game_map.all_sprites:
-            if self.camera.rect.colliderect(cell):
-                new_cell = self.camera.apply(cell.rect)
-                self.screen.blit(cell.image, new_cell)
+        for sprite in self.game_map.all_sprites:
+            if self.camera.rect.colliderect(sprite):
+                new_cell = self.camera.apply(sprite.rect)
+                self.screen.blit(sprite.image, new_cell)
 
         new = self.camera.apply(self.game_map.border)
         self.game_map.draw_border_map(self.screen, new)
-
-
 
     def run(self):
         running = True
         while running:
             self.clock.tick(self.fps)  # FPS
+            dt = self.clock.tick(self.fps) / 1000
             running = self.handle_events()
             self.camera_move()
+            self.game_map.agent_sprite.update(dt)
             pygame.display.flip()
 
         pygame.quit()
