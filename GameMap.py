@@ -1,40 +1,10 @@
 import pygame
 import numpy as np
-from Creatures import Creature
+from Creature_components.Creatures import Creature
+from Creature_components.Genes import Genes
 from Config import *
-import sys
-import gc
-
-
-class Cell(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        super().__init__()
-        self.color = (255, 255, 255)
-        self.image = pygame.Surface((SIZE_CELL, SIZE_CELL))
-        self.image.fill(self.color)
-        self.rect = self.image.get_rect(topleft=(x, y))
-        self.show_border = False
-        self.agent = []
-
-    def toggle_border(self):
-        self.show_border = not self.show_border
-        self.draw_border()
-
-    def draw_border(self):
-        self.image.fill(self.color)
-        if self.show_border:
-            pygame.draw.rect(self.image, (0, 87, 84), self.image.get_rect(), 1)
-
-    def del_agent(self, agent):
-        self.agent.remove(agent)
-
-    def get_agent(self, agent):
-        self.color = (255, 0, 0)
-        self.image.fill(self.color)
-        self.agent.append(agent)
-
-    def __str__(self):
-        return f'{self.rect}'
+from Food import Food
+from Cell import Cell
 
 
 class Map:
@@ -46,10 +16,13 @@ class Map:
         self.populate = 1
         self.cells_sprite = pygame.sprite.Group()
         self.agent_sprite = pygame.sprite.Group()
+        self.food_sprite = pygame.sprite.Group()
         self.all_sprites = pygame.sprite.Group()
         self.border = self.create_border_map()
+        self.count_creature = 0
         self.create_cell()
         self.create_agent()
+        self.create_food()
 
     def create_cell(self):
         w, h = self.size_map
@@ -59,6 +32,13 @@ class Map:
                 self.cells_array[y, x] = cell
                 self.cells_sprite.add(cell)
                 self.all_sprites.add(cell)
+
+    def get_random_cell(self):
+        w, h = self.size_map
+        x = np.random.randint(w)
+        y = np.random.randint(h)
+        cell = self.cells_array[y, x]
+        return cell, (y, x)
 
     def create_border_map(self):
         x, y = self.size_map_pix
@@ -71,14 +51,32 @@ class Map:
 
     def create_agent(self):
         for i in range(self.populate):
-            w, h = self.size_map
-            x = np.random.randint(w)
-            y = np.random.randint(h)
-            coord = (x * self.size_cell, y * self.size_cell)
-            cell = self.cells_array[y, x]
-            agent = Creature(coord, (y, x), (self.agent_sprite, self.all_sprites))
+            self.count_creature += 1
+            cell, index_cell = self.get_random_cell()
+            coord = cell.rect.topleft
+            start_gen = Genes()
+            agent = Creature(coord=coord, word_map=self.cells_array, index_cell=index_cell,
+                             sprite_groups=(self.agent_sprite, self.all_sprites),
+                             num=self.count_creature)
             agent.get_cell(cell)
-            agent.get_map(self.cells_array)
+            agent.get_gen(start_gen)
+            agent.distribute_gen()
+            # agent.create_logic()
+            # agent.get_map(self.cells_array)
             cell.get_agent(agent)
 
-
+    def create_food(self):
+        spawn_food = 0
+        while spawn_food < COUNT_FOOD:
+            cell, index_cell = self.get_random_cell()
+            if cell.food:
+                continue
+            else:
+                coord = cell.rect.topleft
+                food = Food(coord=coord,
+                            index_cell=index_cell,
+                            sprite_groups=(self.food_sprite, self.all_sprites),
+                            cell=cell)
+                food.get_map(self.cells_array)
+                cell.get_food(food)
+                spawn_food += 1

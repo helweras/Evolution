@@ -20,7 +20,7 @@ class Game:
     @staticmethod
     def setting_window():
         screen_info = pygame.display.Info()
-        w, h = screen_info.current_w, screen_info.current_h - 60
+        w, h = screen_info.current_w-200, screen_info.current_h - 200
 
         screen = pygame.display.set_mode((w, h), pygame.RESIZABLE | pygame.SCALED)
         pygame.display.set_caption("Evolution Simulation")
@@ -71,6 +71,7 @@ class Game:
             dt = self.clock.tick(self.fps) / 1000
             running = self.handle_events()
             self.camera_move()
+            self.game_map.food_sprite.update(dt)
             self.game_map.agent_sprite.update(dt)
             pygame.display.flip()
 
