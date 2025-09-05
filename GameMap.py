@@ -13,7 +13,7 @@ class Map:
         self.cells_array = np.empty(size_map[::-1], dtype=object)
         self.size_cell = SIZE_CELL
         self.size_map_pix = (size_map[0] * self.size_cell, size_map[1] * self.size_cell)
-        self.populate = 1
+        self.populate = 3
         self.cells_sprite = pygame.sprite.Group()
         self.agent_sprite = pygame.sprite.Group()
         self.food_sprite = pygame.sprite.Group()

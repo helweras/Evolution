@@ -5,7 +5,7 @@ from random import choice
 
 class NodeBase:
 
-    def run(self, dt, creature):
+    def run(self, dt, creature, ctx):
         return 'переопределить'
 
 
@@ -25,8 +25,8 @@ class Node(NodeBase):
         self.node_true = node_true
         self.node_false = node_false
 
-    def run(self, dt, creature):
-        return self.behavior.start(dt, creature)
+    def run(self, dt, creature, ctx):
+        return self.behavior.start(dt, creature, ctx)
 
     def left_right(self, creature):
         if self.condition(creature):

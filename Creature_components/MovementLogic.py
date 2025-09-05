@@ -36,7 +36,7 @@ class MovementLogic:
                     cell.get_agent(self.creature)
                     self.creature.get_cell(cell)
                     self.creature.update_position(new_x, new_y)
-                    self.creature.logic.metabolic.energy -= 0.1
+                    self.creature.logic.metabolic.energy -= 1
                 except Exception as e:
                     print(e, 'step')
                     sys.exit()

@@ -1,15 +1,17 @@
-MAP_SIZE_CELL_X = 30
-MAP_SIZE_CELL_Y = 20
+MAP_SIZE_CELL_X = 10
+MAP_SIZE_CELL_Y = 10
 MAP_SIZE_CELL = (MAP_SIZE_CELL_X, MAP_SIZE_CELL_Y)
 MAP_SIZE_CELL_SQUARE = MAP_SIZE_CELL_X * MAP_SIZE_CELL_Y
-SIZE_CELL = 30
+SIZE_CELL = 20
 CAMERA_SPEED = 10
 MAP_SIZE_PIX = (MAP_SIZE_CELL[0] * SIZE_CELL, MAP_SIZE_CELL[1] * SIZE_CELL)
 FPS = 10
 COUNT_FOOD = MAP_SIZE_CELL_SQUARE // 100 + 11
 
-GEN_START = {
-    'color': (125, 125, 125),
-    'speed': 10,
-    'life_time': 2.0
-}
+
+
+GEN_Name = (
+    "metabolic"
+    "move_logic"
+    "reproduction"
+)

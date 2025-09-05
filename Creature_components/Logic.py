@@ -10,6 +10,7 @@ from Creature_components.Metabolizm import Metabolic
 from Creature_components.Reproduction import Reproduction
 from Creature_components.BuilderTree import BuilderTree
 from Creature_components.DoNode import DoIt
+from Creature_components.BehaviorTimer import BehaviorContext
 class Logic:
     def __init__(self, creature):
         self.creature = creature
@@ -17,11 +18,13 @@ class Logic:
         self.metabolic = Metabolic(self.creature)
         self.reproduction = Reproduction(self.creature)
         self.builder_tree:BuilderTree = None
-        # self.builder_tree.print_behavior()
         self.doit:DoIt = None
 
-    def __del__(self):
-        print('logic_dead')
+
+        self.behavior_timer = BehaviorContext()
+
+    # def __del__(self):
+    #     print(f'logic_dead creature {self.creature}')
 
     def gen_tree(self, tree=None, root=None):
         build_tree = BuilderTree(tree=tree, root=root)
@@ -39,4 +42,14 @@ class Logic:
         if self.builder_tree.condition.is_dead(self.creature):
             self.metabolic.death()
             return
-        self.doit.go(dt, self.creature)
+        self.doit.go(dt, self.creature, self.behavior_timer)
+
+    def distribute_gen(self):
+        self.creature.image.fill(self.creature.gen.color)
+        for key, val in self.creature.gen.genes.items():
+            if isinstance(val, dict):
+                atr = self.__dict__[key]
+                for key_atr, val_atr in val.items():
+                    atr.get_gen(key_atr, val_atr)
+        self.gen_tree(self.creature.gen.tree, self.creature.gen.root)
+        self.create_doit()

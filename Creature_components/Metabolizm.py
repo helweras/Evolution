@@ -9,7 +9,7 @@ import gc
 class Metabolic:
     def __init__(self, creature):
         self.creature = creature
-        self.energy = 20
+        self.energy: int = None
 
     def eat(self):
         if self.creature.cell.food:
@@ -22,10 +22,8 @@ class Metabolic:
             self.creature.del_cell()
             self.creature.logic = None
             self.creature.kill()
-            rfs = gc.get_referents(self)
         except Exception as e:
             print(f'{e}')
-            sys.exit()
 
     def get_gen(self, gen: str, val):
         if hasattr(self, gen):  # проверяем, что атрибут есть

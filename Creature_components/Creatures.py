@@ -44,14 +44,8 @@ class Creature(pygame.sprite.Sprite):
         self.gen = gen
 
     def distribute_gen(self):
-        self.image.fill(self.color)
-        for key, val in self.gen.__dict__.items():
-            if isinstance(val, dict):
-                atr = self.logic.__dict__[key]
-                for key_atr, val_atr in val.items():
-                    atr.get_gen(key_atr, val_atr)
-        self.logic.gen_tree(self.gen.tree, self.gen.root)
-        self.logic.create_doit()
+        self.logic.distribute_gen()
+
 
     def return_gen(self):
         return self.gen
@@ -65,54 +59,11 @@ class Creature(pygame.sprite.Sprite):
     def update(self, dt):
         self.logic.update(dt)
 
-    # def eat(self):
-    #     if self.cell.food:
-    #         self.kkal += self.cell.food.energy
-    #         self.cell.food.dead()
 
     def update_position(self, new_x, new_y):
         self.rect.topleft = (new_x, new_y)
 
-    def death(self):
-        try:
-            self.cell.del_agent(self)
-            self.del_cell()
-            self.kill()
-        except Exception as e:
-            print(f'{e}')
-            sys.exit()
-
-    def mitoz(self):
-        gen = {
-            'color': self.color.copy(),
-            'speed': self.speed,
-            'life_time': self.death_time
-        }
-        matrix_color = np.array(list(gen['color']))
-        d_color = np.random.randint(-7, 7, size=matrix_color.shape)
-        matrix_color = gen['color'] + d_color
-        matrix_color = np.clip(matrix_color, 0, 255).astype(np.uint8)
-
-        gen['color'] = matrix_color
-        self.kkal -= 10
-
-        new = self.__class__(self.rect.topleft,
-                             (self.index_cell_y, self.index_cell_x),
-                             self.sprite_groups,
-                             **gen)
-
-        new.get_cell(self.cell)
-        new.cell.get_agent(new)
-        new.get_map(self.map)
 
     def del_cell(self):
         self.cell = None
 
-        # if self.check_death():
-        #     self.death()
-        #     return
-        # self.age += dt
-        # self.kkal -= dt * self.speed * 0.2
-        # if self.age >= self.mitoz_age and self.check_mitoz():
-        #     for i in range(1):
-        #         self.mitoz()
